@@ -11,7 +11,7 @@
 | Foundation | Sprint 1 | ✅ Completed |
 | Data Understanding | Sprint 2 | ✅ Completed |
 | Dataset Construction | Sprint 3A | ✅ Completed |
-| Dataset Construction | Sprint 3B | 🟡 In Progress |
+| Dataset Construction | Sprint 3B | ✅ Completed |
 | Feature Engineering | Sprint 4 | ⬜ Planned |
 | Modeling | Sprint 5 | ⬜ Planned |
 | Advanced Modeling | Sprint 6 | ⬜ Planned |
@@ -83,23 +83,39 @@
 
 ---
 
-## Sprint 3B 🟡
+## Sprint 3B ✅
 
 ### Objectives
 
-- [ ] Execute pipeline on the full dataset
-- [ ] Generate negative samples
-- [ ] Validate generated dataset
-- [ ] False Negative analysis
-- [ ] Sampling distribution report
-- [ ] Memory & runtime profiling
-- [ ] Export training dataset
+- [x] Execute pipeline on the full dataset
+- [x] Generate negative samples
+- [x] Validate generated dataset
+- [x] False Negative analysis
+- [x] Sampling distribution report
+- [x] Memory & runtime profiling
+- [x] Export training dataset
+
+### Results
+
+- Positive samples: 250,000
+- Negative samples: 239,204
+- Total samples: 489,204
+- Easy negatives: 74,999
+- Medium negatives: 74,997
+- Hard negatives: 89,208
+- Removed known positive pairs: 9,775
+- Removed exact query-title matches: 1,471
+- Removed high lexical similarity samples: 1,540
+- Runtime: 45 seconds
+- Memory usage: ~590 MB
 
 ### Deliverables
 
-- processed_training_dataset.parquet
-- sampling_report.md
-- sampling_summary.csv
+- `data/processed/training_dataset_with_negatives.csv`
+- `reports/sprint_3_negative_sampling_report.md`
+- `reports/figures/negative_sample_type_distribution.png`
+- `reports/figures/negative_label_distribution.png`
+- `reports/figures/negative_category_distribution.png`
 
 ---
 
