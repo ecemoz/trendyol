@@ -6,10 +6,7 @@ foundation for the Trendyol Datathon 2026 query-product relevance task.
 The final objective of the project is to predict whether a given
 `(query, product)` pair is relevant or not as a binary classification problem.
 
-Sprint 1 is limited to project infrastructure and raw data validation. Sprint 2
-adds exploratory data analysis and data understanding. Sprint 3 builds the
-negative sampling dataset. Sprint 4 adds reusable lexical feature extraction.
-Sprint 5 adds baseline modeling, cross validation, and threshold analysis.
+Sprint 5 adds baseline modeling, cross validation, and threshold analysis. Sprint 6 adds advanced statistical NLP similarity features (TF-IDF and BM25), integrates them into the feature pipeline, and trains and validates the LightGBM classifier with the combined feature set.
 
 ## Sprint 1 Scope
 
@@ -183,6 +180,40 @@ useful baseline. LightGBM clearly outperforms the Logistic Regression
 baseline, and the validation threshold scan does not improve on the default
 0.50 cutoff.
 
+## Sprint 6 Scope
+
+Sprint 6 focuses on advanced statistical NLP feature engineering. The goal is to build strong lexical-semantic match representations between queries and various catalog metadata fields (titles, categories, attributes) using stateful TF-IDF vectorizers and Okapi BM25 scores.
+
+Implemented Sprint 6 modules:
+- TF-IDF Similarity feature extractor
+- Okapi BM25 Similarity feature extractor
+- Extended feature pipeline incorporating all new extractors
+- Baseline evaluation script with new features
+- Stratified 5-Fold Cross Validation script for the new feature set
+
+Sprint 6 outputs:
+- `data/processed/features_with_tfidf.parquet` (TF-IDF only)
+- `data/processed/features_with_tfidf_bm25.parquet` (TF-IDF + BM25)
+- `reports/lightgbm_tfidf_report.md`
+- `reports/lightgbm_tfidf_bm25_report.md`
+- `reports/cross_validation_tfidf_report.md`
+- `reports/cross_validation_tfidf_bm25_report.md`
+
+Sprint 6 result summary:
+- Feature rows: 489,204
+- Feature columns: 63 (61 features + 2 preserved columns)
+- LightGBM Macro F1 score: 0.892524 (an increase of +0.008283 over baseline)
+- LightGBM 5-fold CV mean Macro F1: 0.890496 (an increase of +0.007988 over baseline CV mean)
+
+Sprint 6 guardrails:
+- No CatBoost or neural models were trained.
+- No embeddings or Sentence Transformers were used.
+- No threshold optimization was performed.
+- No submission file was generated.
+
+Sprint 6 conclusions:
+Statistical similarity features (TF-IDF and BM25) significantly boost query-relevance prediction accuracy. In the combined model, these new similarity metrics completely dominate the top slots in feature importance, demonstrating that statistical matching metrics are critical indicators of search relevance.
+
 ## Project Structure
 
 ```text
@@ -219,19 +250,25 @@ baseline, and the validation threshold scan does not improve on the default
 │   ├── features/
 │   │   ├── __init__.py
 │   │   ├── attribute_features.py
+│   │   ├── bm25_features.py
 │   │   ├── brand_features.py
 │   │   ├── category_features.py
 │   │   ├── feature_pipeline.py
 │   │   ├── query_features.py
 │   │   ├── similarity_features.py
+│   │   ├── tfidf_features.py
 │   │   └── title_features.py
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── baseline_lightgbm.py
 │   │   ├── baseline_logistic.py
 │   │   ├── cross_validation.py
+│   │   ├── cross_validation_tfidf.py
+│   │   ├── cross_validation_tfidf_bm25.py
 │   │   ├── data_split.py
-│   │   └── threshold_optimization.py
+│   │   ├── threshold_optimization.py
+│   │   ├── train_lightgbm_tfidf.py
+│   │   └── train_lightgbm_tfidf_bm25.py
 │   ├── negative_sampling/
 │   │   ├── __init__.py
 │   │   ├── easy_sampler.py
@@ -250,7 +287,11 @@ baseline, and the validation threshold scan does not improve on the default
 │   ├── baseline_lightgbm_report.md
 │   ├── baseline_logistic_report.md
 │   ├── cross_validation_report.md
+│   ├── cross_validation_tfidf_report.md
+│   ├── cross_validation_tfidf_bm25_report.md
 │   ├── feature_pipeline_report.md
+│   ├── lightgbm_tfidf_report.md
+│   ├── lightgbm_tfidf_bm25_report.md
 │   ├── sprint_3_negative_sampling_report.md
 │   ├── sprint_2_eda_report.md
 │   └── threshold_optimization_report.md
@@ -424,7 +465,7 @@ The negative sampling report is written to:
 reports/sprint_3_negative_sampling_report.md
 ```
 
-## Run Sprint 4 Feature Pipeline
+## Run Sprint 4 / 6 Feature Pipeline
 
 After generating `data/processed/training_dataset_with_negatives.csv`, run:
 
@@ -432,16 +473,24 @@ After generating `data/processed/training_dataset_with_negatives.csv`, run:
 python3 -m src.features.feature_pipeline
 ```
 
-The command writes the feature output to:
+The command writes the combined feature output (including TF-IDF + BM25 similarity features) to:
 
 ```text
 data/processed/features.parquet
 ```
 
-The feature pipeline execution report is written to:
+## Run Sprint 6 Modeling and Evaluation
 
-```text
-reports/feature_pipeline_report.md
+To train the LightGBM classifier with the combined TF-IDF + BM25 features, run:
+
+```bash
+python3 -m src.models.train_lightgbm_tfidf_bm25
+```
+
+To validate stability using Stratified 5-Fold Cross Validation:
+
+```bash
+python3 -m src.models.cross_validation_tfidf_bm25
 ```
 
 ## Sprint 2 Key Findings

@@ -14,7 +14,7 @@
 | Dataset Construction | Sprint 3B | ✅ Completed |
 | Feature Engineering | Sprint 4 | ✅ Completed |
 | Modeling | Sprint 5 | ✅ Completed |
-| Advanced Modeling | Sprint 6 | ⬜ Planned |
+| Advanced Modeling | Sprint 6 | ✅ Completed |
 | Optimization | Sprint 7 | ⬜ Planned |
 | Explainability | Sprint 8 | ⬜ Planned |
 | Deployment | Sprint 9 | ⬜ Planned |
@@ -210,15 +210,42 @@ Deliverable:
 
 # 🚀 Phase 6 — Advanced Modeling
 
-## Sprint 6
+## Sprint 6 ✅
 
 ### Objectives
 
+- [x] Create TF-IDF Similarity Features (query ↔ title, query ↔ category, query ↔ attributes)
+- [x] Create BM25 Similarity Features (query ↔ title, query ↔ category, query ↔ attributes)
+- [x] Integrate advanced similarity features into the feature pipeline
+- [x] Evaluate LightGBM modeling performance with TF-IDF + BM25 features
+- [x] Run Stratified 5-Fold Cross Validation to ensure generalization performance
 - [ ] Sentence Transformers
 - [ ] Dense embeddings
 - [ ] CatBoost
 - [ ] Hybrid models
 - [ ] Embedding similarity features
+
+### Results
+
+- Combined dataset shape: 489,204 rows, 63 columns (61 features)
+- LightGBM Macro F1 score: 0.892524 (an increase of +0.008283 over baseline)
+- LightGBM 5-fold CV mean Macro F1: 0.890496 (an increase of +0.007988 over baseline CV mean)
+- Top 3 predictive features: `bm25_query_category_score`, `bm25_query_title_score`, `tfidf_query_category_similarity`
+
+### Deliverables
+
+- `src/features/tfidf_features.py`
+- `src/features/bm25_features.py`
+- `src/models/train_lightgbm_tfidf.py`
+- `src/models/train_lightgbm_tfidf_bm25.py`
+- `src/models/cross_validation_tfidf.py`
+- `src/models/cross_validation_tfidf_bm25.py`
+- `data/processed/features_with_tfidf.parquet`
+- `data/processed/features_with_tfidf_bm25.parquet`
+- `reports/lightgbm_tfidf_report.md`
+- `reports/lightgbm_tfidf_bm25_report.md`
+- `reports/cross_validation_tfidf_report.md`
+- `reports/cross_validation_tfidf_bm25_report.md`
 
 ---
 

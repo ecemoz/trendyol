@@ -166,3 +166,54 @@ best observed macro F1, no adjustment is needed for the current baseline.
 
 Status:
 Completed.
+
+---
+
+## 2026-07-01
+Decision:
+Use the combined TF-IDF and BM25 similarity features as part of the advanced feature engineering set for modeling query-product relevance.
+
+Result:
+Introduced 6 new advanced NLP similarity features (3 TF-IDF, 3 BM25) for query-title, query-category, and query-attribute pairs:
+- `tfidf_query_title_cosine_similarity`
+- `tfidf_query_category_similarity`
+- `tfidf_query_attribute_similarity`
+- `bm25_query_title_score`
+- `bm25_query_category_score`
+- `bm25_query_attribute_score`
+
+The feature pipeline was executed on the full negative sampled training dataset. The output was saved to `data/processed/features_with_tfidf_bm25.parquet` containing 489,204 rows and 63 columns (61 feature columns, 2 preserved columns), with zero missing values.
+
+Reason:
+Lexical similarities alone do not capture frequency-based text matching strengths. Introducing statistical NLP matching scores like TF-IDF cosine similarity and Okapi BM25 scores significantly enhances the representation of semantic matches between queries and catalog fields.
+
+Status:
+Completed.
+
+---
+
+## 2026-07-01
+Decision:
+Train LightGBM baseline model on the combined TF-IDF and BM25 feature set.
+
+Result:
+The LightGBM model trained on the combined TF-IDF + BM25 features achieved a validation Macro F1 score of 0.892524 (an increase of +0.008283 over the baseline model and +0.003042 over the TF-IDF-only model).
+In terms of feature importance, the new features took the top spots:
+1. `bm25_query_category_score`
+2. `bm25_query_title_score`
+3. `tfidf_query_category_similarity`
+
+Status:
+Completed.
+
+---
+
+## 2026-07-01
+Decision:
+Perform Stratified 5-Fold Cross Validation on the TF-IDF + BM25 feature set to verify generalization.
+
+Result:
+The 5-fold cross-validation Mean Macro F1 score achieved was 0.890496 with an extremely low standard deviation of 0.000739. This represents a substantial, stable improvement of +0.007988 over the baseline CV mean Macro F1 score of 0.882508.
+
+Status:
+Completed.
