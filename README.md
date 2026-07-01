@@ -9,7 +9,7 @@ The final objective of the project is to predict whether a given
 Sprint 1 is limited to project infrastructure and raw data validation. Sprint 2
 adds exploratory data analysis and data understanding. Sprint 3 builds the
 negative sampling dataset. Sprint 4 adds reusable lexical feature extraction.
-No model development is included in these sprints.
+Sprint 5 adds baseline modeling, cross validation, and threshold analysis.
 
 ## Sprint 1 Scope
 
@@ -140,6 +140,49 @@ Sprint 4 result summary:
 - LightGBM, CatBoost, or XGBoost usage
 - Submission file generation
 
+## Sprint 5 Scope
+
+Sprint 5 focuses on baseline modeling with the prepared feature dataset. The
+goal is to establish a reproducible first model benchmark before any advanced
+feature engineering or ensemble work.
+
+Implemented Sprint 5 modules:
+
+- Logistic Regression baseline
+- LightGBM baseline
+- Stratified cross validation
+- Threshold optimization on the validation split
+
+Sprint 5 outputs:
+
+- `reports/baseline_logistic_report.md`
+- `reports/baseline_lightgbm_report.md`
+- `reports/cross_validation_report.md`
+- `reports/threshold_optimization_report.md`
+- `reports/figures/threshold_vs_macro_f1.png`
+
+Sprint 5 result summary:
+
+- Logistic Regression macro F1: 0.843509
+- LightGBM macro F1: 0.884241
+- LightGBM 5-fold CV mean macro F1: 0.882508
+- LightGBM 5-fold CV macro F1 std: 0.000789
+- Best threshold: 0.50
+
+Sprint 5 guardrails:
+
+- No new features were introduced.
+- No TF-IDF, BM25, or embeddings were created.
+- No CatBoost or neural models were trained.
+- No submission file was generated.
+
+Sprint 5 conclusions:
+
+The numeric and boolean feature set is already strong enough to establish a
+useful baseline. LightGBM clearly outperforms the Logistic Regression
+baseline, and the validation threshold scan does not improve on the default
+0.50 cutoff.
+
 ## Project Structure
 
 ```text
@@ -183,7 +226,12 @@ Sprint 4 result summary:
 │   │   ├── similarity_features.py
 │   │   └── title_features.py
 │   ├── models/
-│   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   ├── baseline_lightgbm.py
+│   │   ├── baseline_logistic.py
+│   │   ├── cross_validation.py
+│   │   ├── data_split.py
+│   │   └── threshold_optimization.py
 │   ├── negative_sampling/
 │   │   ├── __init__.py
 │   │   ├── easy_sampler.py
@@ -199,9 +247,13 @@ Sprint 4 result summary:
 ├── models/
 ├── reports/
 │   ├── figures/
+│   ├── baseline_lightgbm_report.md
+│   ├── baseline_logistic_report.md
+│   ├── cross_validation_report.md
 │   ├── feature_pipeline_report.md
 │   ├── sprint_3_negative_sampling_report.md
-│   └── sprint_2_eda_report.md
+│   ├── sprint_2_eda_report.md
+│   └── threshold_optimization_report.md
 ├── submissions/
 ├── logs/
 ├── tests/
@@ -238,7 +290,8 @@ pipeline.
 
 `src/negative_sampling/` contains the Sprint 3 negative sampling pipeline.
 
-`src/models/` is reserved for modeling code in future sprints.
+`src/models/` contains baseline modeling, validation, and threshold analysis
+code.
 
 `src/evaluation/` is reserved for evaluation code in future sprints.
 

@@ -13,7 +13,7 @@
 | Dataset Construction | Sprint 3A | ✅ Completed |
 | Dataset Construction | Sprint 3B | ✅ Completed |
 | Feature Engineering | Sprint 4 | ✅ Completed |
-| Modeling | Sprint 5 | ⬜ Planned |
+| Modeling | Sprint 5 | ✅ Completed |
 | Advanced Modeling | Sprint 6 | ⬜ Planned |
 | Optimization | Sprint 7 | ⬜ Planned |
 | Explainability | Sprint 8 | ⬜ Planned |
@@ -168,20 +168,43 @@
 
 # 🤖 Phase 5 — Baseline Modeling
 
-## Sprint 5
+## Sprint 5 ✅
 
 ### Objectives
 
-- [ ] Train/Validation split
-- [ ] Cross Validation
-- [ ] Logistic Regression baseline
-- [ ] LightGBM baseline
-- [ ] Evaluation
-- [ ] Threshold optimization
+- [x] Train/Validation split
+- [x] Cross Validation
+- [x] Logistic Regression baseline
+- [x] LightGBM baseline
+- [x] Evaluation
+- [x] Threshold optimization
 
 Deliverable:
 
-- First Kaggle submission
+### Results
+
+- Logistic Regression macro F1: 0.843509
+- LightGBM macro F1: 0.884241
+- LightGBM 5-fold CV mean macro F1: 0.882508
+- LightGBM 5-fold CV macro F1 std: 0.000789
+- Best threshold: 0.50
+
+### Deliverables
+
+- `reports/baseline_logistic_report.md`
+- `reports/baseline_lightgbm_report.md`
+- `reports/cross_validation_report.md`
+- `reports/threshold_optimization_report.md`
+- `reports/figures/threshold_vs_macro_f1.png`
+
+### Guardrails
+
+- [x] No new features introduced
+- [x] No TF-IDF
+- [x] No BM25
+- [x] No embeddings
+- [x] No CatBoost or neural models
+- [x] No submission generation
 
 ---
 
