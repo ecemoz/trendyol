@@ -11,6 +11,7 @@ from src.features.brand_features import BrandFeatureExtractor
 from src.features.category_features import CategoryFeatureExtractor
 from src.features.query_features import QueryFeatureExtractor
 from src.features.similarity_features import SimilarityFeatureExtractor
+from src.features.tfidf_features import TfidfSimilarityFeatureExtractor
 from src.features.title_features import TitleFeatureExtractor
 from src.utils.logger import get_logger
 
@@ -97,6 +98,9 @@ class FeaturePipeline:
         logger.info("Running similarity feature extractor")
         similarity_features = SimilarityFeatureExtractor().transform(dataframe)
 
+        logger.info("Running TF-IDF similarity feature extractor")
+        tfidf_features = TfidfSimilarityFeatureExtractor().fit_transform(dataframe)
+
         preserved_columns = dataframe[[LABEL_COLUMN, SAMPLE_TYPE_COLUMN]].copy()
         features = pd.concat(
             [
@@ -106,6 +110,7 @@ class FeaturePipeline:
                 brand_features,
                 attribute_features,
                 similarity_features,
+                tfidf_features,
                 preserved_columns,
             ],
             axis=1,
