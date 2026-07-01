@@ -12,7 +12,7 @@
 | Data Understanding | Sprint 2 | ✅ Completed |
 | Dataset Construction | Sprint 3A | ✅ Completed |
 | Dataset Construction | Sprint 3B | ✅ Completed |
-| Feature Engineering | Sprint 4 | ⬜ Planned |
+| Feature Engineering | Sprint 4 | ✅ Completed |
 | Modeling | Sprint 5 | ⬜ Planned |
 | Advanced Modeling | Sprint 6 | ⬜ Planned |
 | Optimization | Sprint 7 | ⬜ Planned |
@@ -121,41 +121,48 @@
 
 # 🧠 Phase 4 — Feature Engineering
 
-## Sprint 4
+## Sprint 4 ✅
 
-### Query Features
+### Objectives
 
-- [ ] Character length
-- [ ] Word count
-- [ ] Numeric tokens
-- [ ] Brand detection
-- [ ] Color detection
+- [x] Query feature extraction
+- [x] Title feature extraction
+- [x] Category feature extraction
+- [x] Brand feature extraction
+- [x] Attribute feature extraction
+- [x] Simple lexical similarity feature extraction
+- [x] Feature pipeline
+- [x] Execute feature pipeline on processed training dataset
+- [x] Export feature dataset
+- [x] Feature pipeline report
 
-### Title Features
+### Results
 
-- [ ] Character length
-- [ ] Word count
-- [ ] Keyword extraction
+- Feature rows: 489,204
+- Feature columns: 57
+- Missing values: 0
+- Feature parquet memory usage: 255.13 MB
+- Feature pipeline runtime: 26.74 seconds
 
-### Similarity Features
+### Deliverables
 
-- [ ] Word overlap
-- [ ] Jaccard similarity
-- [ ] BM25
-- [ ] TF-IDF cosine similarity
+- `src/features/query_features.py`
+- `src/features/title_features.py`
+- `src/features/category_features.py`
+- `src/features/brand_features.py`
+- `src/features/attribute_features.py`
+- `src/features/similarity_features.py`
+- `src/features/feature_pipeline.py`
+- `data/processed/features.parquet`
+- `reports/feature_pipeline_report.md`
 
-### Category Features
+### Guardrails
 
-- [ ] Main category match
-- [ ] Category depth
-- [ ] Leaf category match
-
-### Attribute Features
-
-- [ ] Color match
-- [ ] Material match
-- [ ] Brand match
-- [ ] Model match
+- [x] No model training
+- [x] No TF-IDF
+- [x] No BM25
+- [x] No embeddings
+- [x] No submission generation
 
 ---
 

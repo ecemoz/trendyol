@@ -7,8 +7,9 @@ The final objective of the project is to predict whether a given
 `(query, product)` pair is relevant or not as a binary classification problem.
 
 Sprint 1 is limited to project infrastructure and raw data validation. Sprint 2
-adds exploratory data analysis and data understanding. No model development is
-included in these sprints.
+adds exploratory data analysis and data understanding. Sprint 3 builds the
+negative sampling dataset. Sprint 4 adds reusable lexical feature extraction.
+No model development is included in these sprints.
 
 ## Sprint 1 Scope
 
@@ -72,6 +73,73 @@ Sprint 2 outputs:
 - Sentence Transformer usage
 - Submission file generation
 
+## Sprint 3 Scope
+
+Sprint 3 focuses on dataset construction with controlled negative sampling.
+The training data is positive-only, so easy, medium, and hard negatives are
+generated before modeling.
+
+Sprint 3 outputs:
+
+- `data/processed/training_dataset_with_negatives.csv`
+- `reports/sprint_3_negative_sampling_report.md`
+- `reports/figures/negative_sample_type_distribution.png`
+- `reports/figures/negative_label_distribution.png`
+- `reports/figures/negative_category_distribution.png`
+
+Sprint 3 result summary:
+
+- Positive samples: 250,000
+- Negative samples: 239,204
+- Total samples: 489,204
+- Easy negatives: 74,999
+- Medium negatives: 74,997
+- Hard negatives: 89,208
+- Removed known positive pairs: 9,775
+- Removed exact query-title matches: 1,471
+- Removed high lexical similarity samples: 1,540
+- Runtime: 45 seconds
+- Memory usage: approximately 590 MB
+
+## Sprint 4 Scope
+
+Sprint 4 focuses on reusable feature extraction from the processed training
+dataset. The implemented features are simple structured and lexical features
+only.
+
+Implemented Sprint 4 modules:
+
+- Query feature extractor
+- Title feature extractor
+- Category feature extractor
+- Brand feature extractor
+- Attribute feature extractor
+- Simple lexical similarity feature extractor
+- Feature pipeline that combines existing extractors
+
+Sprint 4 outputs:
+
+- `data/processed/features.parquet`
+- `reports/feature_pipeline_report.md`
+
+Sprint 4 result summary:
+
+- Feature rows: 489,204
+- Feature columns: 57
+- Missing values: 0
+- Feature parquet memory usage: 255.13 MB
+- Feature pipeline runtime: 26.74 seconds
+
+## Out of Scope for Sprint 4
+
+- Model training
+- TF-IDF feature creation
+- BM25
+- Embedding generation
+- Sentence Transformer usage
+- LightGBM, CatBoost, or XGBoost usage
+- Submission file generation
+
 ## Project Structure
 
 ```text
@@ -96,6 +164,7 @@ Sprint 2 outputs:
 │   │   └── visualization.py
 │   ├── config/
 │   │   ├── __init__.py
+│   │   ├── negative_sampling.py
 │   │   └── paths.py
 │   ├── data/
 │   │   ├── __init__.py
@@ -105,15 +174,33 @@ Sprint 2 outputs:
 │   ├── evaluation/
 │   │   └── __init__.py
 │   ├── features/
-│   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   ├── attribute_features.py
+│   │   ├── brand_features.py
+│   │   ├── category_features.py
+│   │   ├── feature_pipeline.py
+│   │   ├── query_features.py
+│   │   ├── similarity_features.py
+│   │   └── title_features.py
 │   ├── models/
 │   │   └── __init__.py
+│   ├── negative_sampling/
+│   │   ├── __init__.py
+│   │   ├── easy_sampler.py
+│   │   ├── hard_sampler.py
+│   │   ├── medium_sampler.py
+│   │   ├── pipeline.py
+│   │   ├── report.py
+│   │   ├── sampler.py
+│   │   └── validator.py
 │   └── utils/
 │       ├── __init__.py
 │       └── logger.py
 ├── models/
 ├── reports/
 │   ├── figures/
+│   ├── feature_pipeline_report.md
+│   ├── sprint_3_negative_sampling_report.md
 │   └── sprint_2_eda_report.md
 ├── submissions/
 ├── logs/
@@ -134,7 +221,8 @@ Sprint 2 outputs:
 
 `data/interim/` is reserved for intermediate datasets in future sprints.
 
-`data/processed/` is reserved for processed datasets in future sprints.
+`data/processed/` stores generated datasets such as the negative sampling
+training dataset and the feature parquet output.
 
 `notebooks/` is reserved for exploratory notebooks. No EDA is performed in
 Sprint 1.
@@ -145,7 +233,10 @@ Sprint 1.
 
 `src/data/` contains raw data loading and validation reporting modules.
 
-`src/features/` is reserved for feature engineering in future sprints.
+`src/features/` contains reusable Sprint 4 feature extractors and the feature
+pipeline.
+
+`src/negative_sampling/` contains the Sprint 3 negative sampling pipeline.
 
 `src/models/` is reserved for modeling code in future sprints.
 
@@ -260,6 +351,46 @@ Generated figures are written to:
 reports/figures/
 ```
 
+## Run Sprint 3 Negative Sampling
+
+After Sprint 2 EDA and raw data setup, run:
+
+```bash
+python3 -m src.negative_sampling.pipeline
+```
+
+The command writes the processed training dataset to:
+
+```text
+data/processed/training_dataset_with_negatives.csv
+```
+
+The negative sampling report is written to:
+
+```text
+reports/sprint_3_negative_sampling_report.md
+```
+
+## Run Sprint 4 Feature Pipeline
+
+After generating `data/processed/training_dataset_with_negatives.csv`, run:
+
+```bash
+python3 -m src.features.feature_pipeline
+```
+
+The command writes the feature output to:
+
+```text
+data/processed/features.parquet
+```
+
+The feature pipeline execution report is written to:
+
+```text
+reports/feature_pipeline_report.md
+```
+
 ## Sprint 2 Key Findings
 
 - `terms.csv` contains 50,153 queries and all queries are unique.
@@ -290,6 +421,19 @@ memorization and focus on text and catalog metadata signals.
 Negative sampling in Sprint 3 should be designed carefully around category,
 title similarity, item popularity, and false-negative risk.
 
+## Sprint 3 Conclusions
+
+The controlled negative sampling pipeline produced a balanced-enough training
+dataset for the next phase while removing likely false negatives. Hard negatives
+are useful but require continued monitoring during validation and error
+analysis.
+
+## Sprint 4 Conclusions
+
+The feature pipeline produced 57 reusable columns from query, title, category,
+brand, attributes, and simple lexical overlaps. No model-specific features,
+TF-IDF, BM25, embeddings, or model training were introduced.
+
 ## Architecture Notes
 
 The project follows clean architecture principles at the repository level:
@@ -298,8 +442,12 @@ The project follows clean architecture principles at the repository level:
 - Data access is isolated under `src/data/data_loader.py`.
 - Data reporting is isolated under `src/data/data_reporter.py`.
 - Exploratory analysis is isolated under `src/analysis/`.
+- Negative sampling is isolated under `src/negative_sampling/`.
+- Feature extraction is isolated under `src/features/`.
 - Shared logging is isolated under `src/utils/logger.py`.
 - Future feature, modeling, and evaluation layers have their own packages.
 
-This keeps Sprint 1 focused on infrastructure and Sprint 2 focused on data
-understanding while leaving clear extension points for future ML development.
+This keeps Sprint 1 focused on infrastructure, Sprint 2 focused on data
+understanding, Sprint 3 focused on dataset construction, and Sprint 4 focused
+on reusable feature extraction while leaving clear extension points for
+modeling.

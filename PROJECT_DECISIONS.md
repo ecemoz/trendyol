@@ -47,3 +47,45 @@ keeps easy, medium and hard negatives while removing likely false negatives.
 
 Status:
 Completed.
+
+---
+
+## 2026-07-01
+Decision:
+Use the Sprint 4 feature parquet as the prepared feature dataset for baseline
+modeling.
+
+Result:
+The feature pipeline was executed on
+`data/processed/training_dataset_with_negatives.csv` and wrote the output to
+`data/processed/features.parquet`.
+
+Feature coverage:
+- Query features
+- Title features
+- Category features
+- Brand features
+- Attribute features
+- Simple lexical similarity features
+
+Output summary:
+- Rows: 489,204
+- Columns: 57
+- Missing values: 0
+- Memory usage: 255.13 MB
+- Runtime: 26.74 seconds
+
+Guardrails:
+- No model training was performed.
+- No TF-IDF features were created.
+- No BM25 features were created.
+- No embeddings were created.
+- No submission file was generated.
+
+Reason:
+The project needs a reusable, model-agnostic feature table before baseline
+modeling. Sprint 4 intentionally keeps the features simple and interpretable so
+the next sprint can focus on validation strategy and baseline model selection.
+
+Status:
+Completed.
